@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="pt-AO">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plataforma — CasaFácil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#10202F; --ink-2:#1A3349; --paper:#EFEAE0; --paper-2:#F7F4EE;
+    --gold:#C99A3B; --gold-soft:#E3C481; --teal:#1B4D45;
+    --line:rgba(16,32,47,0.12); --line-light:rgba(247,244,238,0.18);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif; background:var(--paper-2); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased; padding-bottom:70px;}
+  h1,h2,h3,.serif{font-family:'Fraunces',serif;}
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  button,select,input{font-family:inherit;}
+  @media (prefers-reduced-motion: reduce){ *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;} }
+  :focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+  .wrap{max-width:1320px; margin:0 auto; padding:0 28px;}
+
+  header{position:sticky; top:0; z-index:100; background:var(--ink); border-bottom:1px solid var(--line-light);}
+  .nav{display:flex; align-items:center; justify-content:space-between; padding:16px 28px; max-width:1320px; margin:0 auto;}
+  .logo{font-family:'Fraunces',serif; font-size:1.3rem; font-weight:600; color:var(--paper-2); display:flex; align-items:center; gap:8px;}
+  .logo .dot{width:7px; height:7px; border-radius:50%; background:var(--gold);}
+  .back-link{font-size:0.85rem; color:rgba(247,244,238,0.6); display:flex; align-items:center; gap:6px;}
+  .back-link:hover{color:var(--paper-2);}
+  .profile-pill{background:rgba(247,244,238,0.08); border:1px solid var(--line-light); color:var(--paper-2); font-size:0.85rem; padding:9px 16px; border-radius:30px;}
+
+  .finalidade-bar{background:var(--ink); padding-top:6px;}
+  .finalidade-tabs{display:flex; gap:4px;}
+  .fin-tab{
+    color:rgba(247,244,238,0.55); font-weight:600; font-size:0.92rem; padding:14px 22px;
+    border-bottom:2px solid transparent; transition:color 0.2s, border-color 0.2s; background:none;
+  }
+  .fin-tab.active{color:var(--paper-2); border-color:var(--gold);}
+  .fin-tab .count{font-size:0.72rem; opacity:0.7; margin-left:4px;}
+
+  .searchbar{background:var(--ink); padding:0 0 22px;}
+  .searchbar .eyebrow{color:var(--gold-soft); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.12em; font-weight:700; display:block; margin:18px 0 8px;}
+  .searchbar h1{color:var(--paper-2); font-size:1.4rem; font-weight:500; margin-bottom:16px;}
+
+  .cat-tabs{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;}
+  .cat-pill{
+    background:rgba(247,244,238,0.06); border:1px solid var(--line-light); color:rgba(247,244,238,0.75);
+    padding:9px 16px; border-radius:30px; font-size:0.85rem; font-weight:500; transition:background 0.2s, color 0.2s;
+  }
+  .cat-pill.active{background:var(--gold); color:var(--ink); border-color:var(--gold); font-weight:700;}
+
+  .filters{
+    display:grid; grid-template-columns:1.1fr 1.1fr 1.1fr 0.9fr 0.9fr auto;
+    gap:10px; background:var(--paper-2); padding:14px; border-radius:8px;
+    box-shadow:0 20px 50px -10px rgba(0,0,0,0.35);
+  }
+  .filters select, .filters input{
+    width:100%; padding:12px 12px; border:1px solid var(--line); border-radius:5px;
+    background:#fff; font-size:0.9rem; color:var(--ink);
+  }
+  .filters select:disabled{opacity:0.45; cursor:not-allowed;}
+  .filters button{
+    background:var(--gold); color:var(--ink); font-weight:700; border-radius:5px; padding:12px 22px; font-size:0.9rem; white-space:nowrap;
+  }
+  .filters button:hover{background:var(--gold-soft);}
+  .more-filters{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
+  .chip-select{
+    background:rgba(247,244,238,0.06); border:1px solid var(--line-light); color:rgba(247,244,238,0.8);
+    padding:9px 14px; border-radius:30px; font-size:0.82rem; display:flex; align-items:center; gap:6px;
+  }
+  .chip-select select{background:transparent; border:none; color:inherit; font-size:0.82rem;}
+  .chip-select select option{color:#000;}
+
+  .insights{background:var(--paper); border-bottom:1px solid var(--line);}
+  .insights-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); margin:24px 0;}
+  .insight-card{background:var(--paper); padding:22px 24px; display:flex; align-items:center; gap:16px;}
+  .insight-icon{
+    width:44px; height:44px; border-radius:50%; background:var(--ink); color:var(--gold-soft);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .insight-icon svg{width:20px; height:20px;}
+  .insight-label{font-size:0.74rem; text-transform:uppercase; letter-spacing:0.08em; color:#6B7B86; font-weight:700; margin-bottom:3px;}
+  .insight-value{font-family:'Fraunces',serif; font-size:1.2rem; font-weight:600;}
+  .insight-sub{font-size:0.78rem; color:#6B7B86; margin-top:2px;}
+
+  .results-bar{
+    max-width:1320px; margin:0 auto; padding:28px 28px 0;
+    display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px;
+  }
+  .results-bar .loc-trail{font-size:0.82rem; color:#6B7B86; margin-bottom:6px;}
+  .results-bar .loc-trail span{color:var(--ink); font-weight:600;}
+  .results-bar h2{font-size:1.4rem; font-weight:600;}
+  .results-count{font-size:0.86rem; color:#6B7B86;}
+  .sort-select{border:1px solid var(--line); border-radius:5px; padding:9px 12px; font-size:0.85rem; background:#fff;}
+
+  .listings{max-width:1320px; margin:0 auto; padding:26px 28px 80px;}
+  .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+  .card{
+    background:#fff; border:1px solid var(--line); border-radius:8px; overflow:hidden;
+    transition:transform 0.25s, box-shadow 0.25s; position:relative;
+  }
+  .card:hover{transform:translateY(-4px); box-shadow:0 20px 40px -12px rgba(16,32,47,0.18);}
+  .card-img{position:relative; aspect-ratio:4/3; overflow:hidden; background:#ddd;}
+  .card-img img{width:100%; height:100%; object-fit:cover; transition:transform 0.4s;}
+  .card:hover .card-img img{transform:scale(1.06);}
+  .badge{
+    position:absolute; top:12px; left:12px; background:rgba(16,32,47,0.85); backdrop-filter:blur(4px);
+    color:var(--paper-2); font-size:0.7rem; font-weight:700; padding:5px 10px; border-radius:30px;
+    display:flex; align-items:center; gap:5px; letter-spacing:0.02em;
+  }
+  .badge svg{width:11px; height:11px; color:var(--gold-soft);}
+  .badge-fin{
+    position:absolute; top:12px; right:44px; font-size:0.68rem; font-weight:700; padding:5px 10px; border-radius:30px;
+    letter-spacing:0.02em;
+  }
+  .badge-fin.venda{background:var(--teal); color:#fff;}
+  .badge-fin.arrendamento{background:var(--gold); color:var(--ink);}
+  .fav{
+    position:absolute; top:12px; right:12px; width:28px; height:28px; border-radius:50%;
+    background:rgba(255,255,255,0.92); display:flex; align-items:center; justify-content:center; color:var(--ink); font-size:0.85rem;
+  }
+  .price-tag{
+    position:absolute; bottom:12px; left:12px; background:var(--gold); color:var(--ink);
+    font-weight:700; font-size:0.9rem; padding:7px 13px; border-radius:5px;
+  }
+  .card-body{padding:18px;}
+  .card-body h3{font-size:1.02rem; font-weight:600; margin-bottom:4px;}
+  .card-loc{font-size:0.83rem; color:#6B7B86; margin-bottom:12px; display:flex; align-items:center; gap:5px;}
+  .card-loc svg{width:13px; height:13px; flex-shrink:0;}
+  .card-feats{display:flex; gap:12px; padding-top:12px; border-top:1px solid var(--line); font-size:0.8rem; color:#4A5A66; flex-wrap:wrap;}
+  .card-feats span{display:flex; align-items:center; gap:5px;}
+  .card-feats svg{width:14px; height:14px; color:#9AA8B0;}
+  .card-actions{display:flex; gap:8px; padding:0 18px 18px;}
+  .btn-visit{
+    flex:1; background:var(--ink); color:var(--paper-2); font-size:0.82rem; font-weight:600;
+    padding:10px; border-radius:5px; text-align:center;
+  }
+  .btn-visit:hover{background:var(--ink-2);}
+  .btn-compare{
+    border:1px solid var(--line); background:#fff; font-size:0.82rem; font-weight:600;
+    padding:10px 14px; border-radius:5px; color:var(--ink); white-space:nowrap;
+  }
+  .btn-compare.selected{background:var(--gold-soft); border-color:var(--gold);}
+
+  .empty-state{ text-align:center; padding:80px 20px; color:#6B7B86; }
+  .empty-state h3{font-family:'Fraunces',serif; font-size:1.4rem; color:var(--ink); margin-bottom:10px;}
+  .empty-state button{margin-top:18px; background:var(--ink); color:var(--paper-2); padding:12px 24px; border-radius:5px; font-weight:600; font-size:0.88rem;}
+
+  .compare-bar{
+    position:fixed; bottom:0; left:0; right:0; background:var(--ink); color:var(--paper-2);
+    padding:14px 28px; display:none; align-items:center; justify-content:space-between; z-index:200;
+    box-shadow:0 -10px 30px rgba(0,0,0,0.3);
+  }
+  .compare-bar.show{display:flex;}
+  .compare-bar .left{display:flex; align-items:center; gap:14px; font-size:0.88rem;}
+  .compare-thumbs{display:flex; gap:6px;}
+  .compare-thumbs img{width:34px; height:34px; border-radius:5px; object-fit:cover; border:1.5px solid var(--gold);}
+  .compare-bar button{padding:10px 18px; border-radius:5px; font-size:0.85rem; font-weight:700;}
+  .btn-compare-go{background:var(--gold); color:var(--ink);}
+  .btn-compare-clear{background:transparent; color:rgba(247,244,238,0.6); text-decoration:underline;}
+
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(16,32,47,0.6); backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center; z-index:300; padding:20px;
+  }
+  .modal-overlay.show{display:flex;}
+  .modal{background:#fff; border-radius:10px; max-width:960px; width:100%; max-height:85vh; overflow-y:auto; padding:32px;}
+  .modal h2{font-size:1.4rem; margin-bottom:20px;}
+  .modal-close{float:right; font-size:1.3rem; background:none; color:#6B7B86;}
+  .compare-table{width:100%; border-collapse:collapse; font-size:0.88rem;}
+  .compare-table th, .compare-table td{padding:12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top;}
+  .compare-table th{width:140px; color:#6B7B86; font-weight:600; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em;}
+  .compare-table img{width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:6px; margin-bottom:8px;}
+
+  @media (max-width:980px){
+    .filters{grid-template-columns:1fr 1fr; }
+    .filters button{grid-column:1/-1;}
+    .grid{grid-template-columns:1fr 1fr;}
+    .insights-grid{grid-template-columns:1fr;}
+  }
+  @media (max-width:640px){
+    .filters{grid-template-columns:1fr;}
+    .grid{grid-template-columns:1fr;}
+    .nav .back-link span{display:none;}
+    .compare-bar{flex-direction:column; gap:10px; align-items:flex-start;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a href="casafacil.html" class="back-link">← <span>Voltar ao site</span></a>
+    <a href="casafacil.html" class="logo"><span class="dot"></span>CasaFácil</a>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <a href="cadastro.html" class="profile-pill" style="background:var(--gold); color:var(--ink); border-color:var(--gold); font-weight:700;">Anunciar Imóvel</a>
+      <a href="cadastro.html" class="profile-pill" id="navProfilePill">Olá, visitante</a>
+    </div>
+  </div>
+  <div class="finalidade-bar">
+    <div class="wrap finalidade-tabs">
+      <button class="fin-tab active" data-fin="todos">Todos</button>
+      <button class="fin-tab" data-fin="arrendamento">Arrendar <span class="count" id="cnt-arrendamento"></span></button>
+      <button class="fin-tab" data-fin="venda">Comprar <span class="count" id="cnt-venda"></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="searchbar">
+  <div class="wrap">
+    <span class="eyebrow">Pesquisar imóveis</span>
+    <h1>Encontre a casa certa, no bairro certo — para arrendar ou comprar.</h1>
+
+    <div class="cat-tabs" id="cat-tabs">
+      <button class="cat-pill active" data-cat="">Todas as categorias</button>
+      <button class="cat-pill" data-cat="Apartamento">Apartamentos / Residências</button>
+      <button class="cat-pill" data-cat="Vivenda">Vivendas</button>
+      <button class="cat-pill" data-cat="Moradia">Moradias</button>
+      <button class="cat-pill" data-cat="Quarto/Anexo">Quartos / Anexos</button>
+    </div>
+
+    <div class="filters">
+      <select id="f-provincia"><option value="">Província</option></select>
+      <select id="f-municipio" disabled><option value="">Município</option></select>
+      <select id="f-bairro" disabled><option value="">Bairro</option></select>
+      <select id="f-preco"><option value="">Preço</option></select>
+      <select id="f-quartos"><option value="">Quartos</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4+">4+</option></select>
+      <button id="btn-search">Pesquisar</button>
+    </div>
+    <div class="more-filters">
+      <label class="chip-select">Mobilado
+        <select id="f-mobilado"><option value="">Indiferente</option><option>Sim</option><option>Não</option></select>
+      </label>
+      <label class="chip-select">Garagem
+        <select id="f-garagem"><option value="">Indiferente</option><option>Sim</option><option>Não</option></select>
+      </label>
+      <label class="chip-select">Quintal
+        <select id="f-quintal"><option value="">Indiferente</option><option>Sim</option><option>Não</option></select>
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="insights">
+  <div class="wrap">
+    <div class="insights-grid">
+      <div class="insight-card">
+        <div class="insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-6 3 4 5-8"/></svg></div>
+        <div>
+          <div class="insight-label">Tipologia mais procurada</div>
+          <div class="insight-value" id="ins-procurada">—</div>
+          <div class="insight-sub" id="ins-procurada-sub"></div>
+        </div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div>
+        <div>
+          <div class="insight-label">Mais vendida / arrendada</div>
+          <div class="insight-value" id="ins-vendida">—</div>
+          <div class="insight-sub" id="ins-vendida-sub"></div>
+        </div>
+      </div>
+      <div class="insight-card">
+        <div class="insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 6-9 12-9 12S3 16 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div>
+          <div class="insight-label">Zona com mais procura</div>
+          <div class="insight-value" id="ins-zona">—</div>
+          <div class="insight-sub" id="ins-zona-sub"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="results-bar">
+  <div>
+    <div class="loc-trail" id="loc-trail">A mostrar imóveis de <span>todas as províncias</span></div>
+    <h2 id="results-title">Imóveis disponíveis</h2>
+    <div class="results-count" id="results-count"></div>
+  </div>
+  <select class="sort-select" id="f-sort">
+    <option value="recentes">Mais recentes</option>
+    <option value="preco-asc">Preço: mais baixo primeiro</option>
+    <option value="preco-desc">Preço: mais alto primeiro</option>
+    <option value="popular">Mais procurados</option>
+  </select>
+</div>
+
+<div class="listings">
+  <div class="grid" id="grid"></div>
+  <div class="empty-state" id="empty" style="display:none;">
+    <h3>Ainda não há imóveis nesta localização</h3>
+    <p>Seja o primeiro a anunciar um imóvel nesta zona, ou alargue a sua pesquisa a outras zonas.</p>
+    <button id="btn-reset">Ver todos os imóveis</button>
+  </div>
+</div>
+
+<div class="compare-bar" id="compare-bar">
+  <div class="left">
+    <div class="compare-thumbs" id="compare-thumbs"></div>
+    <span id="compare-label">0 imóveis selecionados</span>
+  </div>
+  <div style="display:flex; gap:10px;">
+    <button class="btn-compare-clear" id="btn-compare-clear">Limpar</button>
+    <button class="btn-compare-go" id="btn-compare-go">Comparar agora</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <button class="modal-close" id="modal-close">✕</button>
+    <h2>Comparar imóveis</h2>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="visit-overlay">
+  <div class="modal" style="max-width:440px;">
+    <button class="modal-close" id="visit-close">✕</button>
+    <h2>Agendar visita</h2>
+    <p style="color:#6B7B86; font-size:0.92rem; margin-bottom:18px;" id="visit-desc"></p>
+    <div id="visit-form">
+      <div class="field" style="margin-bottom:12px;"><label style="display:block; font-size:0.84rem; font-weight:600; margin-bottom:6px;">O seu nome</label><input type="text" id="visit-nome" placeholder="Nome completo" style="width:100%; padding:11px 14px; border:1px solid var(--line); border-radius:6px; font-size:0.9rem;"></div>
+      <div class="field" style="margin-bottom:12px;"><label style="display:block; font-size:0.84rem; font-weight:600; margin-bottom:6px;">Telefone / WhatsApp</label><input type="tel" id="visit-telefone" placeholder="+244 9XX XXX XXX" style="width:100%; padding:11px 14px; border:1px solid var(--line); border-radius:6px; font-size:0.9rem;"></div>
+      <div class="field" style="margin-bottom:16px;"><label style="display:block; font-size:0.84rem; font-weight:600; margin-bottom:6px;">Data preferida</label><input type="date" id="visit-data" style="width:100%; padding:11px 14px; border:1px solid var(--line); border-radius:6px; font-size:0.9rem;"></div>
+      <button id="visit-submit" style="width:100%; background:var(--gold); color:var(--ink); font-weight:700; padding:13px; border-radius:6px; font-size:0.92rem;">Pedir agendamento</button>
+      <p id="visit-error" style="color:var(--danger,#B3432B); font-size:0.8rem; margin-top:8px; display:none;"></p>
+    </div>
+    <div id="visit-confirmed" style="display:none; text-align:center; padding:10px 0;">
+      <p style="font-size:0.95rem; font-weight:600; color:var(--teal); margin-bottom:6px;">✓ Pedido enviado</p>
+      <p style="font-size:0.88rem; color:#6B7B86;">Um consultor CasaFácil vai confirmar consigo a data e hora, via WhatsApp.</p>
+    </div>
+    <div style="background:var(--paper); border-radius:6px; padding:16px; font-size:0.85rem; color:#4A5A66; margin-top:16px;">
+      📅 Próxima disponibilidade: <strong>amanhã, entre as 9h e as 17h</strong><br>
+      Um consultor entrará em contacto via WhatsApp em breve.
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-storage-compat.js"></script>
+<script src="firebase-config.js"></script>
+
+<script>
+const PROVINCIAS = {
+  "Luanda": ["Belas","Cacuaco","Camama","Cazenga","Hoji-ya-Henda","Ingombota","Kilamba","Kilamba Kiaxi","Maianga","Mulenvos","Mussulo","Rangel","Samba","Sambizanga","Talatona","Viana"],
+  "Bengo": ["Ambriz","Bula Atumba","Dande","Dembos","Nambuangongo","Pango Aluquém"],
+  "Icolo e Bengo": ["Ícolo e Bengo","Quiçama","Cabo Ledo"],
+  "Benguela": ["Balombo","Baía Farta","Benguela","Bocoio","Caimbambo","Catumbela","Chongorói","Cubal","Ganda","Lobito"],
+  "Bié": ["Andulo","Camacupa","Catabola","Chinguar","Chitembo","Cuemba","Cunhinga","Cuíto","Nharea"],
+  "Cabinda": ["Belize","Buco-Zau","Cabinda","Cacongo"],
+  "Cuando Cubango": ["Calai","Cuangar","Cuchi","Cuito Cuanavale","Menongue","Nancova"],
+  "Cuando": ["Mavinga","Rivungo","Dirico"],
+  "Cuanza Norte": ["Ambaca","Banga","Bolongongo","Cambambe","Cazengo","Golungo Alto","Gonguembo","Lucala","Quiculungo","Samba Caju"],
+  "Cuanza Sul": ["Amboim","Cassongue","Cela","Conda","Ebo","Libolo","Mussende","Porto Amboim","Quibala","Quilenda","Seles","Sumbe"],
+  "Cunene": ["Cahama","Cuanhama","Curoca","Cuvelai","Namacunde","Ombadja"],
+  "Huambo": ["Bailundo","Cachiungo","Caála","Ecunha","Huambo","Londuimbali","Longonjo","Mungo","Chicala-Choloanga","Chinjenje","Ucuma"],
+  "Huíla": ["Caconda","Cacula","Caluquembe","Chiange","Chibia","Chicomba","Chipindo","Cuvango","Humpata","Jamba","Lubango","Matala","Quilengues","Quipungo"],
+  "Lunda Norte": ["Cambulo","Capenda-Camulemba","Caungula","Chitato","Cuango","Cuílo","Lóvua","Lubalo","Lucapa","Xá-Muteba"],
+  "Lunda Sul": ["Cacolo","Dala","Muconda","Saurimo"],
+  "Malanje": ["Cacuso","Calandula","Cambundi-Catembo","Cangandala","Caombo","Cuaba Nzoji","Cunda-Dia-Baze","Luquembo","Malanje","Marimba","Massango","Mucari","Quela","Quirima"],
+  "Moxico": ["Bundas","Camanongue","Léua","Luau","Luacano","Luena"],
+  "Moxico Leste": ["Alto Zambeze","Cameia","Luchazes"],
+  "Namibe": ["Bibala","Camucuio","Moçâmedes","Tômbua","Virei"],
+  "Uíge": ["Alto Cauale","Ambuíla","Bembe","Buengas","Bungo","Damba","Milunga","Mucaba","Negage","Puri","Quimbele","Quitexe","Sanza Pombo","Songo","Uíge","Zombo"],
+  "Zaire": ["Cuimba","M'Banza Kongo","Nóqui","Nzeto","Soyo","Tomboco"]
+};
+
+const IMOVEIS = [
+  {id:1, titulo:"Quarto/anexo independente", finalidade:"arrendamento", provincia:"Luanda", municipio:"Cazenga", bairro:"Hoji-ya-Henda", tipo:"Quarto/Anexo", preco:15000, quartos:1, mobilado:false, garagem:false, quintal:false, interesse:210, transacoes:34, img:"https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=600&q=80"},
+  {id:2, titulo:"Quarto mobilado com casa de banho", finalidade:"arrendamento", provincia:"Luanda", municipio:"Cacuaco", bairro:"Sequele", tipo:"Quarto/Anexo", preco:22000, quartos:1, mobilado:true, garagem:false, quintal:false, interesse:180, transacoes:28, img:"https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&q=80"},
+  {id:3, titulo:"Apartamento T1 simples", finalidade:"arrendamento", provincia:"Luanda", municipio:"Viana", bairro:"Zango", tipo:"Apartamento", preco:35000, quartos:1, mobilado:false, garagem:false, quintal:false, interesse:265, transacoes:41, img:"https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&q=80"},
+  {id:4, titulo:"Apartamento T2 arrendamento", finalidade:"arrendamento", provincia:"Luanda", municipio:"Maianga", bairro:"Alvalade", tipo:"Apartamento", preco:95000, quartos:2, mobilado:true, garagem:false, quintal:false, interesse:340, transacoes:52, img:"https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=600&q=80"},
+  {id:5, titulo:"Moradia popular T3 para arrendar", finalidade:"arrendamento", provincia:"Luanda", municipio:"Viana", bairro:"Zango 3", tipo:"Moradia", preco:75000, quartos:3, mobilado:false, garagem:false, quintal:true, interesse:150, transacoes:19, img:"https://images.unsplash.com/photo-1599809275671-b5942cabc7a2?w=600&q=80"},
+  {id:6, titulo:"Apartamento T3 mobilado", finalidade:"arrendamento", provincia:"Luanda", municipio:"Talatona", bairro:"Talatona", tipo:"Apartamento", preco:420000, quartos:3, mobilado:true, garagem:true, quintal:false, interesse:298, transacoes:37, img:"https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=600&q=80"},
+  {id:7, titulo:"Vivenda alto padrão para arrendar", finalidade:"arrendamento", provincia:"Luanda", municipio:"Talatona", bairro:"Condomínio Belas", tipo:"Vivenda", preco:850000, quartos:5, mobilado:true, garagem:true, quintal:true, interesse:120, transacoes:9, img:"https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&q=80"},
+  {id:8, titulo:"Apartamento T2 vista cidade", finalidade:"arrendamento", provincia:"Luanda", municipio:"Ingombota", bairro:"Ingombota", tipo:"Apartamento", preco:280000, quartos:2, mobilado:true, garagem:true, quintal:false, interesse:175, transacoes:22, img:"https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=80"},
+  {id:9, titulo:"Vivenda familiar com garagem", finalidade:"arrendamento", provincia:"Luanda", municipio:"Cacuaco", bairro:"Sequele", tipo:"Vivenda", preco:180000, quartos:3, mobilado:false, garagem:true, quintal:true, interesse:98, transacoes:14, img:"https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=600&q=80"},
+  {id:10, titulo:"Apartamento T2 arrendamento Benguela", finalidade:"arrendamento", provincia:"Benguela", municipio:"Benguela", bairro:"Compão", tipo:"Apartamento", preco:110000, quartos:2, mobilado:true, garagem:false, quintal:false, interesse:88, transacoes:11, img:"https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80"},
+
+  {id:11, titulo:"Apartamento T2 renovado", finalidade:"venda", provincia:"Luanda", municipio:"Maianga", bairro:"Maianga", tipo:"Apartamento", preco:18500000, quartos:2, mobilado:true, garagem:false, quintal:false, interesse:255, transacoes:12, img:"https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&q=80"},
+  {id:12, titulo:"Vivenda T4 com quintal", finalidade:"venda", provincia:"Luanda", municipio:"Maianga", bairro:"Prenda", tipo:"Vivenda", preco:62000000, quartos:4, mobilado:false, garagem:true, quintal:true, interesse:140, transacoes:6, img:"https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&q=80"},
+  {id:13, titulo:"T1 prático e bem localizado", finalidade:"venda", provincia:"Luanda", municipio:"Maianga", bairro:"Alvalade", tipo:"Apartamento", preco:9800000, quartos:1, mobilado:true, garagem:false, quintal:false, interesse:310, transacoes:19, img:"https://images.unsplash.com/photo-1502005229762-cf1b2da7c5d6?w=600&q=80"},
+  {id:14, titulo:"Apartamento T3 com varanda", finalidade:"venda", provincia:"Luanda", municipio:"Talatona", bairro:"Talatona", tipo:"Apartamento", preco:48000000, quartos:3, mobilado:true, garagem:true, quintal:false, interesse:410, transacoes:24, img:"https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=600&q=80"},
+  {id:15, titulo:"Vivenda alto padrão com piscina", finalidade:"venda", provincia:"Luanda", municipio:"Talatona", bairro:"Condomínio Belas", tipo:"Vivenda", preco:145000000, quartos:5, mobilado:true, garagem:true, quintal:true, interesse:190, transacoes:5, img:"https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&q=80"},
+  {id:16, titulo:"Apartamento T2 económico", finalidade:"venda", provincia:"Luanda", municipio:"Viana", bairro:"Zango", tipo:"Apartamento", preco:8200000, quartos:2, mobilado:false, garagem:false, quintal:false, interesse:365, transacoes:31, img:"https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&q=80"},
+  {id:17, titulo:"Moradia popular T3", finalidade:"venda", provincia:"Luanda", municipio:"Viana", bairro:"Zango 3", tipo:"Moradia", preco:14500000, quartos:3, mobilado:false, garagem:false, quintal:true, interesse:220, transacoes:17, img:"https://images.unsplash.com/photo-1599809275671-b5942cabc7a2?w=600&q=80"},
+  {id:18, titulo:"Apartamento T2 vista cidade", finalidade:"venda", provincia:"Luanda", municipio:"Ingombota", bairro:"Ingombota", tipo:"Apartamento", preco:55000000, quartos:2, mobilado:true, garagem:true, quintal:false, interesse:130, transacoes:7, img:"https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&q=80"},
+  {id:19, titulo:"Apartamento T3 em condomínio", finalidade:"venda", provincia:"Luanda", municipio:"Kilamba", bairro:"Kilamba Centralidade", tipo:"Apartamento", preco:32000000, quartos:3, mobilado:false, garagem:true, quintal:false, interesse:275, transacoes:20, img:"https://images.unsplash.com/photo-1576941089067-2de3c901e126?w=600&q=80"},
+  {id:20, titulo:"Vivenda à beira-mar", finalidade:"venda", provincia:"Benguela", municipio:"Lobito", bairro:"Restinga", tipo:"Vivenda", preco:78000000, quartos:4, mobilado:true, garagem:true, quintal:true, interesse:95, transacoes:4, img:"https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80"},
+  {id:21, titulo:"Moradia com quintal amplo", finalidade:"venda", provincia:"Huíla", municipio:"Lubango", bairro:"Comercial", tipo:"Moradia", preco:24000000, quartos:3, mobilado:false, garagem:true, quintal:true, interesse:105, transacoes:8, img:"https://images.unsplash.com/photo-1572120360610-d971b9d7767c?w=600&q=80"},
+  {id:22, titulo:"Apartamento T1 moderno", finalidade:"venda", provincia:"Luanda", municipio:"Samba", bairro:"Samba", tipo:"Apartamento", preco:22000000, quartos:1, mobilado:true, garagem:false, quintal:false, interesse:160, transacoes:9, img:"https://images.unsplash.com/photo-1600210492486-715a346e8ec3?w=600&q=80"},
+];
+
+const PRECO_RANGES = {
+  arrendamento: [
+    {v:"15000-40000", l:"15.000 – 40.000 Kz/mês"},
+    {v:"40000-100000", l:"40.000 – 100.000 Kz/mês"},
+    {v:"100000-300000", l:"100.000 – 300.000 Kz/mês"},
+    {v:"300000-999999999", l:"Acima de 300.000 Kz/mês"}
+  ],
+  venda: [
+    {v:"0-15000000", l:"Até 15M Kz"},
+    {v:"15000000-40000000", l:"15M – 40M Kz"},
+    {v:"40000000-90000000", l:"40M – 90M Kz"},
+    {v:"90000000-999999999999", l:"Acima de 90M Kz"}
+  ]
+};
+
+let state = { finalidade: 'todos', categoria: '' };
+let compareSet = [];
+let currentVisitImovel = null;
+
+const fProvincia = document.getElementById('f-provincia');
+const fMunicipio = document.getElementById('f-municipio');
+const fBairro = document.getElementById('f-bairro');
+const fPreco = document.getElementById('f-preco');
+const fQuartos = document.getElementById('f-quartos');
+const fMobilado = document.getElementById('f-mobilado');
+const fGaragem = document.getElementById('f-garagem');
+const fQuintal = document.getElementById('f-quintal');
+const fSort = document.getElementById('f-sort');
+
+Object.keys(PROVINCIAS).sort().forEach(p=>{
+  const o = document.createElement('option'); o.value = p; o.textContent = p;
+  fProvincia.appendChild(o);
+});
+
+function rebuildPrecoOptions(){
+  const key = state.finalidade === 'venda' ? 'venda' : 'arrendamento';
+  fPreco.innerHTML = '<option value="">Preço (' + (key==='venda' ? 'compra' : 'mensal') + ')</option>';
+  PRECO_RANGES[key].forEach(r=>{
+    const o = document.createElement('option'); o.value = r.v; o.textContent = r.l;
+    fPreco.appendChild(o);
+  });
+}
+rebuildPrecoOptions();
+
+document.querySelectorAll('.fin-tab').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.fin-tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.finalidade = btn.dataset.fin;
+    rebuildPrecoOptions();
+    fPreco.value = '';
+    render();
+  });
+});
+
+document.querySelectorAll('.cat-pill').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.cat-pill').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.categoria = btn.dataset.cat;
+    render();
+  });
+});
+
+fProvincia.addEventListener('change', ()=>{
+  fMunicipio.innerHTML = '<option value="">Município</option>';
+  fBairro.innerHTML = '<option value="">Bairro</option>';
+  fBairro.disabled = true;
+  if(fProvincia.value){
+    fMunicipio.disabled = false;
+    PROVINCIAS[fProvincia.value].slice().sort().forEach(m=>{
+      const o = document.createElement('option'); o.value = m; o.textContent = m;
+      fMunicipio.appendChild(o);
+    });
+  } else { fMunicipio.disabled = true; }
+  render();
+});
+
+fMunicipio.addEventListener('change', ()=>{
+  fBairro.innerHTML = '<option value="">Bairro</option>';
+  const bairros = [...new Set(IMOVEIS.filter(i=>i.municipio===fMunicipio.value).map(i=>i.bairro))].sort();
+  if(fMunicipio.value && bairros.length){
+    fBairro.disabled = false;
+    bairros.forEach(b=>{ const o = document.createElement('option'); o.value = b; o.textContent = b; fBairro.appendChild(o); });
+  } else { fBairro.disabled = true; }
+  render();
+});
+
+[fBairro, fPreco, fQuartos, fMobilado, fGaragem, fQuintal, fSort].forEach(el=> el.addEventListener('change', render));
+document.getElementById('btn-search').addEventListener('click', render);
+document.getElementById('btn-reset').addEventListener('click', ()=>{
+  [fProvincia, fQuartos, fMobilado, fGaragem, fQuintal].forEach(el=> el.value = '');
+  fPreco.value='';
+  fMunicipio.innerHTML = '<option value="">Município</option>'; fMunicipio.disabled = true;
+  fBairro.innerHTML = '<option value="">Bairro</option>'; fBairro.disabled = true;
+  state.categoria = ''; state.finalidade = 'todos';
+  document.querySelectorAll('.cat-pill').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.cat-pill[data-cat=""]').classList.add('active');
+  document.querySelectorAll('.fin-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.fin-tab[data-fin="todos"]').classList.add('active');
+  rebuildPrecoOptions();
+  render();
+});
+
+function fmtKz(v, fin){ return v.toLocaleString('pt-PT') + ' Kz' + (fin==='arrendamento' ? '/mês' : ''); }
+function iconHouse(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>'; }
+function iconBed(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-7a2 2 0 012-2h14a2 2 0 012 2v7M3 18v2M21 18v2M3 13h18"/></svg>'; }
+function iconPin(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 6-9 12-9 12S3 16 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>'; }
+function iconCheck(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>'; }
+function iconCar(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17h14M5 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0zM3 17V11l2-5h14l2 5v6"/></svg>'; }
+
+function applyFilters(){
+  let list = IMOVEIS.slice();
+  if(state.finalidade !== 'todos') list = list.filter(i=>i.finalidade===state.finalidade);
+  if(state.categoria) list = list.filter(i=>i.tipo===state.categoria);
+  if(fProvincia.value) list = list.filter(i=>i.provincia===fProvincia.value);
+  if(fMunicipio.value) list = list.filter(i=>i.municipio===fMunicipio.value);
+  if(fBairro.value) list = list.filter(i=>i.bairro===fBairro.value);
+  if(fPreco.value){
+    const [min,max] = fPreco.value.split('-').map(Number);
+    list = list.filter(i=>i.preco>=min && i.preco<=max);
+  }
+  if(fQuartos.value){
+    list = list.filter(i=> fQuartos.value==='4+' ? i.quartos>=4 : i.quartos===Number(fQuartos.value));
+  }
+  if(fMobilado.value) list = list.filter(i=> (fMobilado.value==='Sim') === i.mobilado);
+  if(fGaragem.value) list = list.filter(i=> (fGaragem.value==='Sim') === i.garagem);
+  if(fQuintal.value) list = list.filter(i=> (fQuintal.value==='Sim') === i.quintal);
+  return list;
+}
+
+function updateInsights(){
+  const base = state.finalidade === 'todos' ? IMOVEIS : IMOVEIS.filter(i=>i.finalidade===state.finalidade);
+
+  const porTipologia = {};
+  base.forEach(i=>{
+    const key = 'T' + i.quartos;
+    porTipologia[key] = porTipologia[key] || {interesse:0, transacoes:0, count:0};
+    porTipologia[key].interesse += i.interesse;
+    porTipologia[key].transacoes += i.transacoes;
+    porTipologia[key].count += 1;
+  });
+  const maisProcurada = Object.entries(porTipologia).sort((a,b)=>b[1].interesse-a[1].interesse)[0];
+  const maisVendida = Object.entries(porTipologia).sort((a,b)=>b[1].transacoes-a[1].transacoes)[0];
+
+  document.getElementById('ins-procurada').textContent = maisProcurada ? maisProcurada[0] : '—';
+  document.getElementById('ins-procurada-sub').textContent = maisProcurada ? maisProcurada[1].interesse + ' pesquisas nos últimos 30 dias' : '';
+
+  document.getElementById('ins-vendida').textContent = maisVendida ? maisVendida[0] : '—';
+  document.getElementById('ins-vendida-sub').textContent = maisVendida ? maisVendida[1].transacoes + (state.finalidade==='arrendamento' ? ' arrendamentos concluídos' : state.finalidade==='venda' ? ' vendas concluídas' : ' negócios concluídos') : '';
+
+  const porZona = {};
+  base.forEach(i=>{
+    porZona[i.municipio] = (porZona[i.municipio]||0) + i.interesse;
+  });
+  const topZona = Object.entries(porZona).sort((a,b)=>b[1]-a[1])[0];
+  document.getElementById('ins-zona').textContent = topZona ? topZona[0] : '—';
+  document.getElementById('ins-zona-sub').textContent = topZona ? topZona[1] + ' pesquisas nesta zona' : '';
+}
+
+function render(){
+  const list = applyFilters();
+
+  if(fSort.value === 'preco-asc') list.sort((a,b)=>a.preco-b.preco);
+  if(fSort.value === 'preco-desc') list.sort((a,b)=>b.preco-a.preco);
+  if(fSort.value === 'popular') list.sort((a,b)=>b.interesse-a.interesse);
+
+  document.getElementById('cnt-arrendamento').textContent = '(' + IMOVEIS.filter(i=>i.finalidade==='arrendamento').length + ')';
+  document.getElementById('cnt-venda').textContent = '(' + IMOVEIS.filter(i=>i.finalidade==='venda').length + ')';
+
+  const trail = document.getElementById('loc-trail');
+  const title = document.getElementById('results-title');
+  let parts = [];
+  if(fProvincia.value) parts.push(fProvincia.value);
+  if(fMunicipio.value) parts.push(fMunicipio.value);
+  if(fBairro.value) parts.push(fBairro.value);
+  const finLabel = state.finalidade === 'venda' ? 'para comprar' : state.finalidade === 'arrendamento' ? 'para arrendar' : '';
+  if(parts.length){
+    trail.innerHTML = 'A mostrar imóveis ' + finLabel + ' de <span>' + parts.join(' → ') + '</span>';
+    title.textContent = 'Imóveis em ' + parts[parts.length-1];
+  } else {
+    trail.innerHTML = 'A mostrar imóveis ' + finLabel + ' de <span>todas as províncias</span>';
+    title.textContent = state.categoria ? state.categoria + 's disponíveis' : 'Imóveis disponíveis';
+  }
+  document.getElementById('results-count').textContent = list.length + (list.length===1 ? ' imóvel encontrado' : ' imóveis encontrados');
+
+  updateInsights();
+
+  const grid = document.getElementById('grid');
+  const empty = document.getElementById('empty');
+  grid.innerHTML = '';
+
+  if(!list.length){
+    empty.style.display = 'block';
+    grid.style.display = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+  grid.style.display = 'grid';
+
+  list.forEach(i=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+    const isSelected = compareSet.includes(i.id);
+    card.innerHTML = `
+      <div class="card-img">
+        <img src="${i.img}" alt="${i.titulo}" loading="lazy">
+        <span class="badge">${iconCheck()} Verificado</span>
+        <span class="badge-fin ${i.finalidade}">${i.finalidade==='venda' ? 'Venda' : 'Arrendamento'}</span>
+        <span class="fav">♡</span>
+        <span class="price-tag">${fmtKz(i.preco, i.finalidade)}</span>
+      </div>
+      <div class="card-body">
+        <h3>${i.titulo}</h3>
+        <div class="card-loc">${iconPin()} ${i.bairro}, ${i.municipio} — ${i.provincia}</div>
+        <div class="card-feats">
+          <span>${iconHouse()} ${i.tipo}</span>
+          <span>${iconBed()} T${i.quartos}</span>
+          ${i.garagem ? `<span>${iconCar()} Garagem</span>` : ''}
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="btn-visit" data-visit="${i.id}">Agendar visita</button>
+        <button class="btn-compare ${isSelected?'selected':''}" data-compare="${i.id}">${isSelected ? '✓ Comparar' : '+ Comparar'}</button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  grid.querySelectorAll('[data-visit]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const im = IMOVEIS.find(x=>x.id===Number(btn.dataset.visit));
+      currentVisitImovel = im;
+      document.getElementById('visit-desc').textContent = im.titulo + ' — ' + im.bairro + ', ' + im.municipio;
+      document.getElementById('visit-form').style.display = 'block';
+      document.getElementById('visit-confirmed').style.display = 'none';
+      document.getElementById('visit-error').style.display = 'none';
+      document.getElementById('visit-nome').value = '';
+      document.getElementById('visit-telefone').value = '';
+      document.getElementById('visit-data').value = '';
+      document.getElementById('visit-overlay').classList.add('show');
+    });
+  });
+  grid.querySelectorAll('[data-compare]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = Number(btn.dataset.compare);
+      if(compareSet.includes(id)){
+        compareSet = compareSet.filter(x=>x!==id);
+      } else {
+        if(compareSet.length>=3){ alert('Pode comparar até 3 imóveis de cada vez.'); return; }
+        compareSet.push(id);
+      }
+      render();
+      updateCompareBar();
+    });
+  });
+}
+
+function updateCompareBar(){
+  const bar = document.getElementById('compare-bar');
+  const thumbs = document.getElementById('compare-thumbs');
+  const label = document.getElementById('compare-label');
+  if(compareSet.length===0){ bar.classList.remove('show'); return; }
+  bar.classList.add('show');
+  thumbs.innerHTML = compareSet.map(id=>{
+    const im = IMOVEIS.find(x=>x.id===id);
+    return `<img src="${im.img}" alt="${im.titulo}">`;
+  }).join('');
+  label.textContent = compareSet.length + (compareSet.length===1 ? ' imóvel selecionado' : ' imóveis selecionados');
+}
+
+document.getElementById('btn-compare-clear').addEventListener('click', ()=>{
+  compareSet = []; render(); updateCompareBar();
+});
+document.getElementById('btn-compare-go').addEventListener('click', ()=>{
+  const items = compareSet.map(id=>IMOVEIS.find(x=>x.id===id));
+  const body = document.getElementById('modal-body');
+  body.innerHTML = `
+    <table class="compare-table">
+      <tr><th></th>${items.map(i=>`<td><img src="${i.img}" alt="${i.titulo}"><strong>${i.titulo}</strong></td>`).join('')}</tr>
+      <tr><th>Preço</th>${items.map(i=>`<td>${fmtKz(i.preco,i.finalidade)}</td>`).join('')}</tr>
+      <tr><th>Finalidade</th>${items.map(i=>`<td>${i.finalidade==='venda'?'Venda':'Arrendamento'}</td>`).join('')}</tr>
+      <tr><th>Localização</th>${items.map(i=>`<td>${i.bairro}, ${i.municipio}</td>`).join('')}</tr>
+      <tr><th>Tipo</th>${items.map(i=>`<td>${i.tipo}</td>`).join('')}</tr>
+      <tr><th>Tipologia</th>${items.map(i=>`<td>T${i.quartos}</td>`).join('')}</tr>
+      <tr><th>Mobilado</th>${items.map(i=>`<td>${i.mobilado?'Sim':'Não'}</td>`).join('')}</tr>
+      <tr><th>Garagem</th>${items.map(i=>`<td>${i.garagem?'Sim':'Não'}</td>`).join('')}</tr>
+      <tr><th>Quintal</th>${items.map(i=>`<td>${i.quintal?'Sim':'Não'}</td>`).join('')}</tr>
+    </table>
+  `;
+  document.getElementById('modal-overlay').classList.add('show');
+});
+document.getElementById('modal-close').addEventListener('click', ()=> document.getElementById('modal-overlay').classList.remove('show'));
+document.getElementById('modal-overlay').addEventListener('click', e=>{ if(e.target.id==='modal-overlay') e.currentTarget.classList.remove('show'); });
+document.getElementById('visit-close').addEventListener('click', ()=> document.getElementById('visit-overlay').classList.remove('show'));
+document.getElementById('visit-overlay').addEventListener('click', e=>{ if(e.target.id==='visit-overlay') e.currentTarget.classList.remove('show'); });
+
+document.getElementById('visit-submit').addEventListener('click', async ()=>{
+  const nome = document.getElementById('visit-nome').value.trim();
+  const telefone = document.getElementById('visit-telefone').value.trim();
+  const data = document.getElementById('visit-data').value;
+  const errEl = document.getElementById('visit-error');
+  if(!nome || !telefone){
+    errEl.textContent = 'Por favor preencha pelo menos o nome e o telefone.';
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+  const btn = document.getElementById('visit-submit');
+  btn.disabled = true;
+  btn.textContent = 'A enviar...';
+  try{
+    if(window.CASAFACIL_FIREBASE_READY && window.db){
+      await window.db.collection('visitas').add({
+        imovelId: currentVisitImovel ? currentVisitImovel.id : null,
+        imovelTitulo: currentVisitImovel ? currentVisitImovel.titulo : null,
+        nome, telefone, dataPreferida: data || null,
+        userId: (window.CASAFACIL_CURRENT_USER && window.CASAFACIL_CURRENT_USER.uid) || null,
+        status: 'pendente',
+        criadoEm: window.fbTimestamp()
+      });
+    }
+    document.getElementById('visit-form').style.display = 'none';
+    document.getElementById('visit-confirmed').style.display = 'block';
+  } catch(err){
+    console.error('Erro ao pedir visita:', err);
+    errEl.textContent = 'Não foi possível enviar o pedido agora. Tente novamente.';
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Pedir agendamento';
+  }
+});
+
+/* ===== Estado de sessão no cabeçalho ===== */
+document.addEventListener('casafacil:auth-changed', function(e){
+  const pill = document.getElementById('navProfilePill');
+  if(!pill) return;
+  if(e.detail.user){
+    const nome = e.detail.user.displayName || e.detail.user.email || 'Conta';
+    pill.textContent = 'Olá, ' + nome.split(' ')[0];
+  } else {
+    pill.textContent = 'Olá, visitante';
+  }
+});
+
+/* ===== Carregar imóveis reais do Firestore (além dos imóveis de demonstração) ===== */
+let nextRealId = 100000;
+async function carregarImoveisReais(){
+  if(!(window.CASAFACIL_FIREBASE_READY && window.db)) return;
+  try{
+    const snap = await window.db.collection('imoveis').where('status','==','verificado').get();
+    snap.forEach(doc=>{
+      const d = doc.data();
+      IMOVEIS.push({
+        id: nextRealId++,
+        firestoreId: doc.id,
+        titulo: d.titulo || 'Imóvel sem título',
+        finalidade: d.finalidade || 'arrendamento',
+        provincia: d.provincia || '',
+        municipio: d.municipio || '',
+        bairro: d.bairro || '',
+        tipo: d.tipo || 'Apartamento',
+        preco: Number(d.preco) || 0,
+        quartos: Number(d.quartos) || 1,
+        mobilado: !!d.mobilado,
+        garagem: !!d.garagem,
+        quintal: !!d.quintal,
+        interesse: Number(d.interesse) || 0,
+        transacoes: Number(d.transacoes) || 0,
+        img: (d.fotos && d.fotos[0]) || 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&q=80'
+      });
+    });
+    if(snap.size){
+      render();
+    }
+  } catch(err){
+    console.error('Erro ao carregar imóveis do Firestore:', err);
+  }
+}
+
+render();
+carregarImoveisReais();
+</script>
+
+<script>
+window.CASABOT_CONTEXT = {
+  groqApiKey: "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",
+  headerSub: "A ajudar na sua pesquisa",
+  greeting: "Olá! Sou o CasaBot 👋 Posso ajudar a encontrar o imóvel certo, explicar como usar os filtros, ou esclarecer dúvidas sobre visitas e negociação. Em que posso ajudar?",
+  quickReplies: [
+    "Como agendo uma visita?",
+    "Como funciona a comparação de imóveis?",
+    "O que significa 'imóvel verificado'?",
+    "Quero arrendar com orçamento apertado"
+  ],
+  systemPrompt: "És o CasaBot, o assistente virtual da CasaFácil, uma plataforma imobiliária angolana de venda e arrendamento de imóveis. " +
+    "Estás a ajudar utilizadores DENTRO DA PLATAFORMA DE PESQUISA. A plataforma permite: separar imóveis por finalidade (Arrendar, com preços mensais a partir de 15.000 Kz, ou Comprar), por categoria (Apartamentos/Residências, Vivendas, Moradias, Quartos/Anexos), e filtrar por província → município → bairro em cascata, preço, nº de quartos, mobilado, garagem e quintal. " +
+    "Há um painel de 'Tipologia mais procurada' e 'Mais vendida/arrendada' que mostra tendências reais de procura. Os utilizadores podem comparar até 3 imóveis lado a lado (botão '+Comparar', depois 'Comparar agora'), e agendar uma visita com um consultor diretamente em cada imóvel (botão 'Agendar visita' — um consultor confirma depois por WhatsApp). Todos os imóveis têm um selo 'Verificado', que significa que a documentação foi confirmada pela equipa CasaFácil antes da publicação. " +
+    "O teu papel é: ajudar a pessoa a encontrar o que procura (perguntando zona, orçamento e tipo se não tiver dito), explicar como usar os filtros e a comparação, esclarecer o processo de agendamento de visita, e dar conselhos práticos e honestos sobre arrendar/comprar em Angola (ex: documentos a levar a uma visita, cuidados antifraude). " +
+    "Sê breve (2-5 frases normalmente), caloroso, prático, e sempre em português de Angola. Se a pessoa quiser recomendações de zona conforme o orçamento, podes sugerir com base em conhecimento geral do mercado angolano, mas deixa claro que os preços exatos dependem dos imóveis disponíveis na plataforma."
+};
+</script>
+<script src="casabot.js"></script>
+</body>
+</html>
