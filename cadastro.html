@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="pt-AO">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadastro — CasaFácil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#10202F; --ink-2:#1A3349; --paper:#EFEAE0; --paper-2:#F7F4EE;
+    --gold:#C99A3B; --gold-soft:#E3C481; --teal:#1B4D45;
+    --line:rgba(16,32,47,0.12); --line-light:rgba(247,244,238,0.18);
+    --danger:#B3432B;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',sans-serif; background:var(--paper-2); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3,.serif{font-family:'Fraunces',serif;}
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  button,select,input,textarea{font-family:inherit;}
+  :focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+  .wrap{max-width:1100px; margin:0 auto; padding:0 28px;}
+
+  header{position:sticky; top:0; z-index:100; background:var(--ink); border-bottom:1px solid var(--line-light);}
+  .nav{display:flex; align-items:center; justify-content:space-between; padding:16px 28px; max-width:1100px; margin:0 auto;}
+  .logo{font-family:'Fraunces',serif; font-size:1.3rem; font-weight:600; color:var(--paper-2); display:flex; align-items:center; gap:8px;}
+  .logo .dot{width:7px; height:7px; border-radius:50%; background:var(--gold);}
+  .back-link{font-size:0.85rem; color:rgba(247,244,238,0.6); display:flex; align-items:center; gap:6px;}
+  .back-link:hover{color:var(--paper-2);}
+
+  /* ---- PROFILE TYPE PICKER ---- */
+  .picker-section{padding:56px 0 30px; background:var(--ink); color:var(--paper-2);}
+  .picker-section .eyebrow{color:var(--gold-soft); font-size:0.78rem; text-transform:uppercase; letter-spacing:0.12em; font-weight:700; display:block; margin-bottom:10px;}
+  .picker-section h1{font-size:1.9rem; font-weight:500; margin-bottom:10px; max-width:20ch;}
+  .picker-section > .wrap > p{color:rgba(247,244,238,0.6); max-width:52ch; margin-bottom:34px;}
+  .profile-cards{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  .profile-card{
+    background:rgba(247,244,238,0.05); border:1.5px solid var(--line-light); border-radius:8px;
+    padding:26px; cursor:pointer; transition:border-color 0.2s, background 0.2s, transform 0.2s;
+    text-align:left;
+  }
+  .profile-card:hover{transform:translateY(-3px); background:rgba(247,244,238,0.08);}
+  .profile-card.active{border-color:var(--gold); background:rgba(201,154,59,0.1);}
+  .profile-icon{
+    width:44px; height:44px; border-radius:50%; background:var(--gold); color:var(--ink);
+    display:flex; align-items:center; justify-content:center; margin-bottom:16px;
+  }
+  .profile-icon svg{width:20px; height:20px;}
+  .profile-card h3{font-size:1.05rem; font-weight:600; margin-bottom:6px;}
+  .profile-card p{font-size:0.85rem; color:rgba(247,244,238,0.55); line-height:1.5;}
+
+  /* ---- FORM SECTIONS ---- */
+  .form-section{padding:48px 0 100px;}
+  .form-panel{display:none;}
+  .form-panel.active{display:block;}
+  .form-card{
+    background:#fff; border:1px solid var(--line); border-radius:10px; padding:36px;
+    box-shadow:0 20px 50px -20px rgba(16,32,47,0.12);
+  }
+  .form-card + .form-card{margin-top:24px;}
+  .form-card h2{font-size:1.3rem; font-weight:600; margin-bottom:6px;}
+  .form-card .sub{font-size:0.88rem; color:#6B7B86; margin-bottom:28px;}
+  .field-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+  .field{margin-bottom:18px;}
+  .field.full{grid-column:1/-1;}
+  .field label{display:block; font-size:0.84rem; font-weight:600; margin-bottom:7px; color:var(--ink-2);}
+  .field .hint{font-size:0.76rem; color:#8A97A0; font-weight:400; margin-left:4px;}
+  .field input, .field select, .field textarea{
+    width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:6px; font-size:0.92rem; background:var(--paper-2);
+    transition:border-color 0.2s, background 0.2s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{border-color:var(--gold); background:#fff;}
+  .field textarea{resize:vertical; min-height:90px;}
+  .field select:disabled{opacity:0.5;}
+
+  .radio-row{display:flex; gap:10px; flex-wrap:wrap;}
+  .radio-pill{
+    border:1px solid var(--line); border-radius:30px; padding:9px 16px; font-size:0.85rem; cursor:pointer;
+    display:flex; align-items:center; gap:7px; background:#fff; transition:border-color 0.2s, background 0.2s;
+  }
+  .radio-pill input{width:14px; height:14px; margin:0;}
+  .radio-pill.checked{border-color:var(--gold); background:rgba(201,154,59,0.08); font-weight:600;}
+
+  .toggle-row{display:flex; gap:12px; margin-bottom:8px;}
+  .toggle-btn{
+    flex:1; border:1.5px solid var(--line); border-radius:6px; padding:12px; text-align:center;
+    font-size:0.86rem; font-weight:600; background:#fff; color:#6B7B86; transition:all 0.2s;
+  }
+  .toggle-btn.on{border-color:var(--teal); background:rgba(27,77,69,0.08); color:var(--teal);}
+
+  /* ---- UPLOAD ---- */
+  .upload-box{
+    border:1.5px dashed var(--line); border-radius:8px; padding:30px 20px; text-align:center;
+    background:var(--paper-2); cursor:pointer; transition:border-color 0.2s, background 0.2s;
+  }
+  .upload-box:hover{border-color:var(--gold); background:rgba(201,154,59,0.05);}
+  .upload-box svg{width:28px; height:28px; color:#9AA8B0; margin:0 auto 10px;}
+  .upload-box p{font-size:0.86rem; color:#6B7B86;}
+  .upload-box .btn-small{margin-top:12px;}
+  .preview-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
+  .preview-thumb{
+    width:76px; height:76px; border-radius:6px; overflow:hidden; position:relative; border:1px solid var(--line);
+  }
+  .preview-thumb img{width:100%; height:100%; object-fit:cover;}
+  .preview-thumb .rm{
+    position:absolute; top:2px; right:2px; width:18px; height:18px; background:rgba(16,32,47,0.7); color:#fff;
+    border-radius:50%; font-size:0.7rem; display:flex; align-items:center; justify-content:center;
+  }
+
+  .btn-small{background:var(--ink); color:var(--paper-2); font-size:0.8rem; font-weight:600; padding:8px 16px; border-radius:5px; display:inline-block;}
+
+  .doc-list{display:flex; flex-direction:column; gap:10px;}
+  .doc-item{
+    display:flex; align-items:center; justify-content:space-between; border:1px solid var(--line);
+    border-radius:6px; padding:14px 16px; background:var(--paper-2);
+  }
+  .doc-item .name{font-size:0.88rem; font-weight:600; display:flex; align-items:center; gap:10px;}
+  .doc-item .name svg{width:17px; height:17px; color:var(--teal);}
+  .doc-item .status{font-size:0.78rem; color:#8A97A0;}
+  .doc-item input[type=file]{display:none;}
+  .doc-item label{background:var(--ink); color:var(--paper-2); font-size:0.78rem; font-weight:600; padding:7px 14px; border-radius:5px; cursor:pointer;}
+
+  .submit-bar{display:flex; align-items:center; justify-content:space-between; gap:20px; margin-top:8px; flex-wrap:wrap;}
+  .submit-bar p{font-size:0.8rem; color:#8A97A0; max-width:44ch;}
+  .btn-submit{background:var(--gold); color:var(--ink); font-weight:700; font-size:0.95rem; padding:14px 32px; border-radius:6px; white-space:nowrap;}
+  .btn-submit:hover{background:var(--gold-soft);}
+
+  .section-num{
+    display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%;
+    background:var(--ink); color:var(--gold-soft); font-family:'Fraunces',serif; font-size:0.85rem; font-weight:600; margin-right:10px;
+  }
+
+  .confirm-screen{display:none; text-align:center; padding:70px 20px;}
+  .confirm-screen.show{display:block;}
+  .confirm-icon{
+    width:70px; height:70px; border-radius:50%; background:var(--teal); color:#fff; display:flex; align-items:center; justify-content:center;
+    margin:0 auto 22px;
+  }
+  .confirm-icon svg{width:32px; height:32px;}
+  .confirm-screen h2{font-size:1.5rem; margin-bottom:10px;}
+  .confirm-screen p{color:#6B7B86; max-width:44ch; margin:0 auto 24px;}
+
+  @media (max-width:800px){
+    .profile-cards{grid-template-columns:1fr;}
+    .field-grid{grid-template-columns:1fr;}
+    .form-card{padding:24px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a href="plataforma.html" class="back-link">← <span>Voltar à plataforma</span></a>
+    <a href="casafacil.html" class="logo"><span class="dot"></span>CasaFácil</a>
+    <span></span>
+  </div>
+</header>
+
+<section class="picker-section">
+  <div class="wrap">
+    <span class="eyebrow">Criar Conta</span>
+    <h1>Como quer usar a CasaFácil?</h1>
+    <p>Escolha o tipo de perfil. Se for proprietário ou empresa, poderá cadastrar imóveis para venda ou arrendamento. Se procura casa, cria uma conta de cliente.</p>
+    <p style="margin-bottom:24px;">Já tem conta? <a href="#" id="toggle-login" style="color:var(--gold-soft); font-weight:600; text-decoration:underline;">Entrar</a></p>
+    <div id="login-box" style="display:none; max-width:420px; background:rgba(247,244,238,0.06); border:1.5px solid var(--line-light); border-radius:8px; padding:22px; margin-bottom:30px;">
+      <div class="field"><label style="color:var(--paper-2);">Email</label><input type="email" id="login-email" placeholder="nome@email.com"></div>
+      <div class="field"><label style="color:var(--paper-2);">Palavra-passe</label><input type="password" id="login-senha" placeholder="A sua palavra-passe"></div>
+      <button class="btn-submit" id="login-btn" style="width:100%;">Entrar</button>
+      <p id="login-msg" style="font-size:0.82rem; margin-top:10px; color:rgba(247,244,238,0.7);"></p>
+    </div>
+    <div class="profile-cards" id="profile-cards">
+      <button class="profile-card" data-profile="proprietario">
+        <div class="profile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
+        <h3>Proprietário</h3>
+        <p>Tenho um ou mais imóveis próprios para arrendar ou vender.</p>
+      </button>
+      <button class="profile-card" data-profile="empresa">
+        <div class="profile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="1"/><path d="M9 21V11h6v10M9 7h.01M13 7h.01M9 4h.01M13 4h.01"/></svg></div>
+        <h3>Empresa / Hotel</h3>
+        <p>Represento uma empresa, imobiliária ou unidade hoteleira com vários imóveis.</p>
+      </button>
+      <button class="profile-card" data-profile="cliente">
+        <div class="profile-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a6 6 0 0112 0v2"/></svg></div>
+        <h3>Cliente</h3>
+        <p>Estou à procura de casa para arrendar ou comprar.</p>
+      </button>
+    </div>
+  </div>
+</section>
+
+<section class="form-section">
+  <div class="wrap">
+
+    <!-- ================= PROPRIETÁRIO / EMPRESA (compartilham estrutura) ================= -->
+    <div class="form-panel" id="panel-proprietario">
+      <div class="form-card">
+        <h2><span class="section-num">1</span>Dados do proprietário</h2>
+        <p class="sub">Estes dados ficam associados à sua conta e aos imóveis que cadastrar.</p>
+        <div class="field-grid">
+          <div class="field"><label>Nome completo</label><input type="text" id="prop-nome" placeholder="Ex: João Kiala"></div>
+          <div class="field"><label>Número do BI</label><input type="text" id="prop-bi-num" placeholder="00000000LA000"></div>
+          <div class="field"><label>Telefone / WhatsApp</label><input type="tel" id="prop-telefone" placeholder="+244 9XX XXX XXX"></div>
+          <div class="field"><label>Email</label><input type="email" id="prop-email" placeholder="nome@email.com"></div>
+          <div class="field"><label>Palavra-passe <span class="hint">(cria a sua conta)</span></label><input type="password" id="prop-senha" placeholder="Mínimo 6 caracteres"></div>
+          <div class="field full"><label>Endereço de residência</label><input type="text" id="prop-endereco" placeholder="Bairro, Município, Província"></div>
+        </div>
+        <p class="sub" style="margin-top:10px; margin-bottom:0;" id="prop-conta-msg"></p>
+      </div>
+
+      <div class="form-card">
+        <h2><span class="section-num">2</span>Verificação de identidade</h2>
+        <p class="sub">Para proteger compradores e arrendatários contra fraude, pedimos a confirmação da sua identidade.</p>
+        <div class="doc-list">
+          <div class="doc-item">
+            <span class="name"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M15 8h4M15 12h4M5 20l4-4a2 2 0 012.8 0L15 20"/></svg>Bilhete de Identidade (frente e verso)</span>
+            <label for="up-bi">Carregar<input type="file" id="up-bi" accept="image/*,.pdf"></label>
+          </div>
+          <div class="doc-item">
+            <span class="name"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Selfie de confirmação</span>
+            <label for="up-selfie">Carregar<input type="file" id="up-selfie" accept="image/*"></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-card" id="card-cadastro-imovel"></div>
+
+      <div class="submit-bar">
+        <p>Ao submeter, confirma que os dados e documentos são verdadeiros. A CasaFácil pode contactá-lo para confirmar informações antes da publicação.</p>
+        <button class="btn-submit" data-submit="proprietario">Submeter cadastro</button>
+      </div>
+    </div>
+
+    <!-- ================= EMPRESA / HOTEL ================= -->
+    <div class="form-panel" id="panel-empresa">
+      <div class="form-card">
+        <h2><span class="section-num">1</span>Dados da empresa</h2>
+        <p class="sub">Para hotéis, imobiliárias ou empresas com múltiplos imóveis.</p>
+        <div class="field-grid">
+          <div class="field"><label>Nome da empresa</label><input type="text" id="emp-nome" placeholder="Ex: Hotel Terra Nova, Lda"></div>
+          <div class="field"><label>NIF</label><input type="text" id="emp-nif" placeholder="0000000000"></div>
+          <div class="field"><label>Tipo de negócio</label>
+            <select id="emp-tipo-negocio">
+              <option>Hotelaria / Alojamento</option>
+              <option>Imobiliária</option>
+              <option>Promotora Imobiliária</option>
+              <option>Gestão de Condomínios</option>
+              <option>Outro</option>
+            </select>
+          </div>
+          <div class="field"><label>Nome do responsável / contacto</label><input type="text" id="emp-responsavel" placeholder="Pessoa de contacto"></div>
+          <div class="field"><label>Telefone / WhatsApp</label><input type="tel" id="emp-telefone" placeholder="+244 9XX XXX XXX"></div>
+          <div class="field"><label>Email institucional</label><input type="email" id="emp-email" placeholder="geral@empresa.co.ao"></div>
+          <div class="field"><label>Palavra-passe <span class="hint">(cria a conta da empresa)</span></label><input type="password" id="emp-senha" placeholder="Mínimo 6 caracteres"></div>
+          <div class="field full"><label>Endereço / sede</label><input type="text" id="emp-endereco" placeholder="Bairro, Município, Província"></div>
+        </div>
+        <p class="sub" style="margin-top:10px; margin-bottom:0;" id="emp-conta-msg"></p>
+      </div>
+
+      <div class="form-card">
+        <h2><span class="section-num">2</span>Documentação da empresa</h2>
+        <p class="sub">Necessária para validar a empresa e emitir o selo de conta verificada.</p>
+        <div class="doc-list">
+          <div class="doc-item">
+            <span class="name"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>Alvará / Licença comercial</span>
+            <label for="up-alvara">Carregar<input type="file" id="up-alvara" accept="image/*,.pdf"></label>
+          </div>
+          <div class="doc-item">
+            <span class="name"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>Certidão comercial / NIF</span>
+            <label for="up-nif">Carregar<input type="file" id="up-nif" accept="image/*,.pdf"></label>
+          </div>
+          <div class="doc-item">
+            <span class="name"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/></svg>BI do responsável legal</span>
+            <label for="up-bi-emp">Carregar<input type="file" id="up-bi-emp" accept="image/*,.pdf"></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-card" id="card-cadastro-imovel-empresa"></div>
+
+      <div class="submit-bar">
+        <p>A conta empresarial passa por validação da equipa CasaFácil antes de poder publicar imóveis.</p>
+        <button class="btn-submit" data-submit="empresa">Submeter cadastro</button>
+      </div>
+    </div>
+
+    <!-- ================= CLIENTE ================= -->
+    <div class="form-panel" id="panel-cliente">
+      <div class="form-card">
+        <h2><span class="section-num">1</span>Criar conta de cliente</h2>
+        <p class="sub">Guarde favoritos, agende visitas e fale diretamente com consultores.</p>
+        <div class="field-grid">
+          <div class="field"><label>Nome completo</label><input type="text" id="cli-nome" placeholder="Seu nome"></div>
+          <div class="field"><label>Telefone / WhatsApp</label><input type="tel" id="cli-telefone" placeholder="+244 9XX XXX XXX"></div>
+          <div class="field"><label>Email</label><input type="email" id="cli-email" placeholder="nome@email.com"></div>
+          <div class="field"><label>Palavra-passe</label><input type="password" id="cli-senha" placeholder="Mínimo 6 caracteres"></div>
+        </div>
+        <p class="sub" style="margin-top:10px; margin-bottom:0;" id="cli-conta-msg"></p>
+      </div>
+
+      <div class="form-card">
+        <h2><span class="section-num">2</span>O que procura?</h2>
+        <p class="sub">Isto ajuda-nos a recomendar imóveis certos para si — sem qualquer compromisso.</p>
+        <div class="field full" style="margin-bottom:20px;">
+          <label>Pretende</label>
+          <div class="radio-row" id="cliente-intencao">
+            <label class="radio-pill"><input type="radio" name="intencao" value="arrendar" checked>Arrendar</label>
+            <label class="radio-pill"><input type="radio" name="intencao" value="comprar">Comprar</label>
+            <label class="radio-pill"><input type="radio" name="intencao" value="ambos">Ainda não sei</label>
+          </div>
+        </div>
+        <div class="field-grid">
+          <div class="field"><label>Província de interesse</label><select id="cli-provincia"><option value="">Selecionar</option></select></div>
+          <div class="field"><label>Município de interesse</label><select id="cli-municipio" disabled><option value="">Selecionar</option></select></div>
+          <div class="field"><label>Orçamento mínimo (Kz)</label><input type="number" id="cli-orc-min" placeholder="15.000"></div>
+          <div class="field"><label>Orçamento máximo (Kz)</label><input type="number" id="cli-orc-max" placeholder="500.000"></div>
+          <div class="field"><label>Tipologia</label>
+            <select id="cli-tipologia"><option value="">Indiferente</option><option>T1</option><option>T2</option><option>T3</option><option>T4+</option></select>
+          </div>
+          <div class="field"><label>Tipo de imóvel</label>
+            <select id="cli-tipo-imovel"><option value="">Indiferente</option><option>Apartamento</option><option>Vivenda</option><option>Moradia</option><option>Quarto/Anexo</option></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="submit-bar">
+        <p>Após o registo, receberá recomendações personalizadas e poderá agendar visitas com consultores.</p>
+        <button class="btn-submit" data-submit="cliente">Criar conta</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="confirm-screen" id="confirm-screen">
+  <div class="wrap">
+    <div class="confirm-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div>
+    <h2 id="confirm-title">Cadastro submetido</h2>
+    <p id="confirm-text">A nossa equipa vai analisar os seus dados e documentos. Normalmente respondemos em até 24 horas.</p>
+    <a href="plataforma.html" class="btn-submit" style="display:inline-block;">Ver imóveis na plataforma</a>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-storage-compat.js"></script>
+<script src="firebase-config.js"></script>
+
+<script>
+const PROVINCIAS = {
+  "Luanda": ["Belas","Cacuaco","Camama","Cazenga","Hoji-ya-Henda","Ingombota","Kilamba","Kilamba Kiaxi","Maianga","Mulenvos","Mussulo","Rangel","Samba","Sambizanga","Talatona","Viana"],
+  "Bengo": ["Ambriz","Bula Atumba","Dande","Dembos","Nambuangongo","Pango Aluquém"],
+  "Icolo e Bengo": ["Ícolo e Bengo","Quiçama","Cabo Ledo"],
+  "Benguela": ["Balombo","Baía Farta","Benguela","Bocoio","Caimbambo","Catumbela","Chongorói","Cubal","Ganda","Lobito"],
+  "Bié": ["Andulo","Camacupa","Catabola","Chinguar","Chitembo","Cuemba","Cunhinga","Cuíto","Nharea"],
+  "Cabinda": ["Belize","Buco-Zau","Cabinda","Cacongo"],
+  "Cuando Cubango": ["Calai","Cuangar","Cuchi","Cuito Cuanavale","Menongue","Nancova"],
+  "Cuando": ["Mavinga","Rivungo","Dirico"],
+  "Cuanza Norte": ["Ambaca","Banga","Bolongongo","Cambambe","Cazengo","Golungo Alto","Gonguembo","Lucala","Quiculungo","Samba Caju"],
+  "Cuanza Sul": ["Amboim","Cassongue","Cela","Conda","Ebo","Libolo","Mussende","Porto Amboim","Quibala","Quilenda","Seles","Sumbe"],
+  "Cunene": ["Cahama","Cuanhama","Curoca","Cuvelai","Namacunde","Ombadja"],
+  "Huambo": ["Bailundo","Cachiungo","Caála","Ecunha","Huambo","Londuimbali","Longonjo","Mungo","Chicala-Choloanga","Chinjenje","Ucuma"],
+  "Huíla": ["Caconda","Cacula","Caluquembe","Chiange","Chibia","Chicomba","Chipindo","Cuvango","Humpata","Jamba","Lubango","Matala","Quilengues","Quipungo"],
+  "Lunda Norte": ["Cambulo","Capenda-Camulemba","Caungula","Chitato","Cuango","Cuílo","Lóvua","Lubalo","Lucapa","Xá-Muteba"],
+  "Lunda Sul": ["Cacolo","Dala","Muconda","Saurimo"],
+  "Malanje": ["Cacuso","Calandula","Cambundi-Catembo","Cangandala","Caombo","Cuaba Nzoji","Cunda-Dia-Baze","Luquembo","Malanje","Marimba","Massango","Mucari","Quela","Quirima"],
+  "Moxico": ["Bundas","Camanongue","Léua","Luau","Luacano","Luena"],
+  "Moxico Leste": ["Alto Zambeze","Cameia","Luchazes"],
+  "Namibe": ["Bibala","Camucuio","Moçâmedes","Tômbua","Virei"],
+  "Uíge": ["Alto Cauale","Ambuíla","Bembe","Buengas","Bungo","Damba","Milunga","Mucaba","Negage","Puri","Quimbele","Quitexe","Sanza Pombo","Songo","Uíge","Zombo"],
+  "Zaire": ["Cuimba","M'Banza Kongo","Nóqui","Nzeto","Soyo","Tomboco"]
+};
+
+/* ===== Template do formulário de cadastro de imóvel (reutilizado para proprietário e empresa) ===== */
+function propertyFormHTML(idPrefix){
+  return `
+    <h2><span class="section-num">3</span>Cadastrar imóvel</h2>
+    <p class="sub">Pode adicionar mais imóveis depois de criar a conta. Comece pelo primeiro.</p>
+
+    <div class="field full" style="margin-bottom:20px;">
+      <label>Este imóvel é para</label>
+      <div class="radio-row">
+        <label class="radio-pill checked"><input type="radio" name="${idPrefix}-finalidade" value="arrendamento" checked>Arrendamento</label>
+        <label class="radio-pill"><input type="radio" name="${idPrefix}-finalidade" value="venda">Venda</label>
+      </div>
+    </div>
+
+    <div class="field-grid">
+      <div class="field"><label>Título do anúncio</label><input type="text" id="${idPrefix}-titulo" placeholder="Ex: Apartamento T2 na Maianga"></div>
+      <div class="field"><label>Tipo de imóvel</label>
+        <select id="${idPrefix}-tipo"><option>Apartamento</option><option>Vivenda</option><option>Moradia</option><option>Quarto/Anexo</option></select>
+      </div>
+      <div class="field"><label>Província</label><select id="${idPrefix}-provincia"><option value="">Selecionar</option></select></div>
+      <div class="field"><label>Município</label><select id="${idPrefix}-municipio" disabled><option value="">Selecionar</option></select></div>
+      <div class="field"><label>Bairro</label><input type="text" id="${idPrefix}-bairro" placeholder="Nome do bairro"></div>
+      <div class="field"><label>Preço <span class="hint">(mensal se for arrendamento)</span></label><input type="number" id="${idPrefix}-preco" min="15000" step="1000" placeholder="Ex: 95000"></div>
+      <div class="field"><label>Nº de quartos (tipologia)</label>
+        <select id="${idPrefix}-quartos"><option value="1">T1</option><option value="2" selected>T2</option><option value="3">T3</option><option value="4">T4+</option></select>
+      </div>
+      <div class="field"><label>Área útil (m²)</label><input type="number" id="${idPrefix}-area" placeholder="Ex: 85"></div>
+    </div>
+
+    <div class="field full">
+      <label>Condições / descrição</label>
+      <textarea id="${idPrefix}-descricao" placeholder="Descreva o imóvel: estado de conservação, condições de pagamento, regras da casa, etc."></textarea>
+    </div>
+
+    <div class="field full" style="margin-bottom:6px;"><label>Características</label></div>
+    <div class="toggle-row">
+      <button type="button" class="toggle-btn" data-toggle="mobilado">Mobilado</button>
+      <button type="button" class="toggle-btn" data-toggle="garagem">Garagem</button>
+      <button type="button" class="toggle-btn" data-toggle="quintal">Quintal</button>
+    </div>
+    <div class="toggle-row" style="margin-bottom:24px;">
+      <button type="button" class="toggle-btn" data-toggle="piscina">Piscina</button>
+      <button type="button" class="toggle-btn" data-toggle="animais">Animais permitidos</button>
+      <button type="button" class="toggle-btn" data-toggle="gerador">Gerador / UPS</button>
+    </div>
+
+    <div class="field full">
+      <label>Localização exata no mapa <span class="hint">(opcional, ajuda na verificação)</span></label>
+      <input type="text" id="${idPrefix}-mapa" placeholder="Cole aqui um link do Google Maps ou descreva a referência">
+    </div>
+
+    <div class="field full">
+      <label>Fotografias do imóvel <span class="hint">(mínimo 3)</span></label>
+      <div class="upload-box" data-upload="${idPrefix}-fotos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        <p>Arraste as fotos aqui ou clique para carregar</p>
+        <span class="btn-small">Escolher ficheiros</span>
+        <input type="file" id="${idPrefix}-fotos" accept="image/*" multiple style="display:none;">
+      </div>
+      <div class="preview-row" id="${idPrefix}-fotos-preview"></div>
+    </div>
+
+    <div class="field full">
+      <label>Vídeo do imóvel <span class="hint">(opcional)</span></label>
+      <div class="upload-box" data-upload="${idPrefix}-video">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="6" width="15" height="12" rx="2"/><path d="M22 8l-5 4 5 4z"/></svg>
+        <p>Carregar vídeo (MP4, máx. 100MB)</p>
+        <span class="btn-small">Escolher ficheiro</span>
+        <input type="file" id="${idPrefix}-video" accept="video/*" style="display:none;">
+      </div>
+      <div class="preview-row" id="${idPrefix}-video-preview"></div>
+    </div>
+
+    <div class="field full">
+      <label>Documentação do imóvel <span class="hint">(escritura, caderneta predial ou contrato-promessa)</span></label>
+      <div class="doc-list">
+        <div class="doc-item">
+          <span class="name"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>Documento de propriedade</span>
+          <label for="${idPrefix}-doc-prop">Carregar<input type="file" id="${idPrefix}-doc-prop" accept="image/*,.pdf"></label>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+document.getElementById('card-cadastro-imovel').innerHTML = propertyFormHTML('prop');
+document.getElementById('card-cadastro-imovel-empresa').innerHTML = propertyFormHTML('emp');
+
+/* ===== Preencher províncias em todos os selects relevantes ===== */
+function fillProvincias(selectEl){
+  Object.keys(PROVINCIAS).sort().forEach(p=>{
+    const o = document.createElement('option'); o.value = p; o.textContent = p;
+    selectEl.appendChild(o);
+  });
+}
+function wireCascade(provSelId, munSelId){
+  const provSel = document.getElementById(provSelId);
+  const munSel = document.getElementById(munSelId);
+  if(!provSel || !munSel) return;
+  fillProvincias(provSel);
+  provSel.addEventListener('change', ()=>{
+    munSel.innerHTML = '<option value="">Selecionar</option>';
+    if(provSel.value){
+      munSel.disabled = false;
+      PROVINCIAS[provSel.value].slice().sort().forEach(m=>{
+        const o = document.createElement('option'); o.value = m; o.textContent = m;
+        munSel.appendChild(o);
+      });
+    } else { munSel.disabled = true; }
+  });
+}
+wireCascade('prop-provincia','prop-municipio');
+wireCascade('emp-provincia','emp-municipio');
+wireCascade('cli-provincia','cli-municipio');
+
+/* ===== Toggle buttons (características) ===== */
+document.addEventListener('click', e=>{
+  if(e.target.matches('.toggle-btn')){
+    e.target.classList.toggle('on');
+  }
+});
+
+/* ===== Radio pill visual state ===== */
+document.addEventListener('change', e=>{
+  if(e.target.type === 'radio' && e.target.closest('.radio-row')){
+    const row = e.target.closest('.radio-row');
+    row.querySelectorAll('.radio-pill').forEach(p=>p.classList.remove('checked'));
+    e.target.closest('.radio-pill').classList.add('checked');
+  }
+});
+
+/* ===== Upload previews ===== */
+document.addEventListener('change', e=>{
+  if(e.target.id && e.target.id.endsWith('-fotos')){
+    const preview = document.getElementById(e.target.id + '-preview');
+    preview.innerHTML = '';
+    Array.from(e.target.files).slice(0,10).forEach(file=>{
+      const url = URL.createObjectURL(file);
+      const div = document.createElement('div');
+      div.className = 'preview-thumb';
+      div.innerHTML = `<img src="${url}"><span class="rm">✕</span>`;
+      preview.appendChild(div);
+    });
+  }
+  if(e.target.id && e.target.id.endsWith('-video')){
+    const preview = document.getElementById(e.target.id + '-preview');
+    preview.innerHTML = '';
+    if(e.target.files[0]){
+      const div = document.createElement('div');
+      div.style.cssText = 'font-size:0.85rem; color:var(--teal); font-weight:600;';
+      div.textContent = '✓ ' + e.target.files[0].name;
+      preview.appendChild(div);
+    }
+  }
+});
+
+/* ===== Profile picker ===== */
+document.querySelectorAll('.profile-card').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    document.querySelectorAll('.profile-card').forEach(c=>c.classList.remove('active'));
+    card.classList.add('active');
+    document.querySelectorAll('.form-panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById('panel-' + card.dataset.profile).classList.add('active');
+    document.getElementById('panel-' + card.dataset.profile).scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+
+/* ===== Login de utilizadores existentes ===== */
+document.getElementById('toggle-login').addEventListener('click', (e)=>{
+  e.preventDefault();
+  const box = document.getElementById('login-box');
+  box.style.display = box.style.display === 'none' ? 'block' : 'none';
+});
+document.getElementById('login-btn').addEventListener('click', async ()=>{
+  const msgEl = document.getElementById('login-msg');
+  if(!requireFirebase(msgEl)) return;
+  const email = document.getElementById('login-email').value.trim();
+  const senha = document.getElementById('login-senha').value;
+  if(!email || !senha){ msgEl.textContent = 'Introduza email e palavra-passe.'; return; }
+  const btn = document.getElementById('login-btn');
+  setBtnLoading(btn, true, 'Entrar');
+  try{
+    await window.auth.signInWithEmailAndPassword(email, senha);
+    window.location.href = 'plataforma.html';
+  } catch(err){
+    msgEl.style.color = 'var(--gold-soft)';
+    msgEl.textContent = 'Não foi possível entrar. Verifique o email e a palavra-passe.';
+  } finally {
+    setBtnLoading(btn, false, 'Entrar');
+  }
+});
+
+/* ===== Submissão real (Firebase Auth + Firestore + Storage) ===== */
+
+function showConfirm(title, text){
+  if(!STORAGE_AVAILABLE){
+    text += ' Nota: as fotos/documentos carregados não foram guardados porque o armazenamento de ficheiros ainda não está ativo na plataforma — os dados de texto ficaram todos guardados normalmente.';
+  }
+  document.querySelector('.form-section').style.display = 'none';
+  document.querySelector('.picker-section').style.display = 'none';
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-text').textContent = text;
+  document.getElementById('confirm-screen').classList.add('show');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function setBtnLoading(btn, loading, label){
+  btn.disabled = loading;
+  btn.textContent = loading ? 'A enviar...' : label;
+}
+
+function requireFirebase(msgEl){
+  if(!(window.CASAFACIL_FIREBASE_READY && window.db && window.auth)){
+    if(msgEl){
+      msgEl.textContent = 'A ligação à base de dados ainda não está configurada (firebase-config.js). Contacte o administrador da plataforma.';
+      msgEl.style.color = 'var(--danger)';
+    }
+    return false;
+  }
+  return true;
+}
+
+/* Cria (ou reaproveita, se já tiver sessão) o utilizador no Firebase Auth */
+async function ensureAccount(email, senha){
+  if(window.auth.currentUser) return window.auth.currentUser;
+  try{
+    const cred = await window.auth.createUserWithEmailAndPassword(email, senha);
+    return cred.user;
+  } catch(err){
+    if(err.code === 'auth/email-already-in-use'){
+      const cred = await window.auth.signInWithEmailAndPassword(email, senha);
+      return cred.user;
+    }
+    throw err;
+  }
+}
+
+/* Carrega uma FileList para o Storage e devolve as URLs de download */
+let STORAGE_AVAILABLE = true; // desliga-se sozinho ao primeiro erro (ex: Storage ainda não ativado no Firebase)
+
+async function uploadFiles(files, pathPrefix){
+  const urls = [];
+  if(!STORAGE_AVAILABLE || !window.storage) return urls;
+  for(const file of files){
+    try{
+      const ref = window.storage.ref().child(pathPrefix + '/' + Date.now() + '_' + file.name);
+      await ref.put(file);
+      urls.push(await ref.getDownloadURL());
+    } catch(err){
+      console.warn('[CasaFácil] Upload indisponível (Storage não ativado?). A continuar sem ficheiros.', err.message);
+      STORAGE_AVAILABLE = false;
+      break;
+    }
+  }
+  return urls;
+}
+async function uploadSingleFile(fileInput, pathPrefix){
+  if(!fileInput || !fileInput.files || !fileInput.files[0]) return null;
+  if(!STORAGE_AVAILABLE || !window.storage) return null;
+  const urls = await uploadFiles([fileInput.files[0]], pathPrefix);
+  return urls[0] || null;
+}
+
+function readToggles(cardEl){
+  const out = {};
+  cardEl.querySelectorAll('.toggle-btn[data-toggle]').forEach(b=>{
+    out[b.dataset.toggle] = b.classList.contains('on');
+  });
+  return out;
+}
+
+async function submitImovel(uid, idPrefix, cardEl){
+  const provincia = document.getElementById(idPrefix+'-provincia').value;
+  const municipio = document.getElementById(idPrefix+'-municipio').value;
+  const bairro = document.getElementById(idPrefix+'-bairro').value.trim();
+  const titulo = document.getElementById(idPrefix+'-titulo').value.trim();
+  const tipo = document.getElementById(idPrefix+'-tipo').value;
+  const preco = Number(document.getElementById(idPrefix+'-preco').value) || 0;
+  const quartos = Number(document.getElementById(idPrefix+'-quartos').value) || 1;
+  const area = Number(document.getElementById(idPrefix+'-area').value) || null;
+  const descricao = document.getElementById(idPrefix+'-descricao').value.trim();
+  const mapa = document.getElementById(idPrefix+'-mapa').value.trim();
+  const finalidadeInput = cardEl.querySelector(`input[name="${idPrefix}-finalidade"]:checked`);
+  const finalidade = finalidadeInput ? finalidadeInput.value : 'arrendamento';
+  const toggles = readToggles(cardEl);
+
+  if(!titulo || !provincia || !municipio || !bairro || !preco){
+    throw new Error('Preencha pelo menos título, província, município, bairro e preço do imóvel.');
+  }
+
+  const fotosInput = document.getElementById(idPrefix+'-fotos');
+  const videoInput = document.getElementById(idPrefix+'-video');
+  const docPropInput = document.getElementById(idPrefix+'-doc-prop');
+
+  const storagePath = 'imoveis/' + uid;
+  const fotos = fotosInput && fotosInput.files.length ? await uploadFiles(Array.from(fotosInput.files).slice(0,10), storagePath + '/fotos') : [];
+  const video = await uploadSingleFile(videoInput, storagePath + '/video');
+  const docPropriedade = await uploadSingleFile(docPropInput, storagePath + '/documentos');
+
+  await window.db.collection('imoveis').add({
+    ownerId: uid,
+    titulo, finalidade, tipo, provincia, municipio, bairro,
+    preco, quartos, area, descricao, mapa,
+    mobilado: !!toggles.mobilado,
+    garagem: !!toggles.garagem,
+    quintal: !!toggles.quintal,
+    piscina: !!toggles.piscina,
+    animais: !!toggles.animais,
+    gerador: !!toggles.gerador,
+    fotos, video, docPropriedade,
+    interesse: 0, transacoes: 0,
+    status: 'pendente',
+    criadoEm: window.fbTimestamp()
+  });
+}
+
+document.querySelectorAll('[data-submit]').forEach(btn=>{
+  btn.addEventListener('click', async ()=>{
+    const type = btn.dataset.submit;
+    const label = btn.textContent;
+
+    if(type === 'proprietario'){
+      const msgEl = document.getElementById('prop-conta-msg');
+      if(!requireFirebase(msgEl)) return;
+      const nome = document.getElementById('prop-nome').value.trim();
+      const email = document.getElementById('prop-email').value.trim();
+      const senha = document.getElementById('prop-senha').value;
+      const biNum = document.getElementById('prop-bi-num').value.trim();
+      const telefone = document.getElementById('prop-telefone').value.trim();
+      const endereco = document.getElementById('prop-endereco').value.trim();
+      if(!nome || !email || !senha || senha.length < 6){
+        msgEl.style.color = 'var(--danger)';
+        msgEl.textContent = 'Preencha nome, email e uma palavra-passe com pelo menos 6 caracteres.';
+        return;
+      }
+      setBtnLoading(btn, true, label);
+      try{
+        const user = await ensureAccount(email, senha);
+        await user.updateProfile({displayName: nome});
+        const biFrente = document.getElementById('up-bi');
+        const selfie = document.getElementById('up-selfie');
+        const biUrl = await uploadSingleFile(biFrente, 'users/'+user.uid+'/identidade');
+        const selfieUrl = await uploadSingleFile(selfie, 'users/'+user.uid+'/identidade');
+        await window.db.collection('users').doc(user.uid).set({
+          tipo: 'proprietario', nome, email, telefone, endereco, biNum,
+          biUrl, selfieUrl, verificado: false, criadoEm: window.fbTimestamp()
+        }, {merge:true});
+        await submitImovel(user.uid, 'prop', document.getElementById('card-cadastro-imovel'));
+        showConfirm('Cadastro submetido', 'A nossa equipa vai verificar os seus documentos e o imóvel cadastrado. Normalmente respondemos em até 24 horas.');
+      } catch(err){
+        console.error(err);
+        msgEl.style.color = 'var(--danger)';
+        msgEl.textContent = err.message || 'Não foi possível concluir o cadastro. Tente novamente.';
+      } finally {
+        setBtnLoading(btn, false, label);
+      }
+
+    } else if(type === 'empresa'){
+      const msgEl = document.getElementById('emp-conta-msg');
+      if(!requireFirebase(msgEl)) return;
+      const nomeEmpresa = document.getElementById('emp-nome').value.trim();
+      const nif = document.getElementById('emp-nif').value.trim();
+      const tipoNegocio = document.getElementById('emp-tipo-negocio').value;
+      const responsavel = document.getElementById('emp-responsavel').value.trim();
+      const email = document.getElementById('emp-email').value.trim();
+      const senha = document.getElementById('emp-senha').value;
+      const telefone = document.getElementById('emp-telefone').value.trim();
+      const endereco = document.getElementById('emp-endereco').value.trim();
+      if(!nomeEmpresa || !email || !senha || senha.length < 6){
+        msgEl.style.color = 'var(--danger)';
+        msgEl.textContent = 'Preencha nome da empresa, email institucional e uma palavra-passe com pelo menos 6 caracteres.';
+        return;
+      }
+      setBtnLoading(btn, true, label);
+      try{
+        const user = await ensureAccount(email, senha);
+        await user.updateProfile({displayName: nomeEmpresa});
+        const alvara = await uploadSingleFile(document.getElementById('up-alvara'), 'users/'+user.uid+'/documentos');
+        const certidaoNif = await uploadSingleFile(document.getElementById('up-nif'), 'users/'+user.uid+'/documentos');
+        const biResponsavel = await uploadSingleFile(document.getElementById('up-bi-emp'), 'users/'+user.uid+'/documentos');
+        await window.db.collection('users').doc(user.uid).set({
+          tipo: 'empresa', nomeEmpresa, nif, tipoNegocio, responsavel, email, telefone, endereco,
+          alvara, certidaoNif, biResponsavel, verificado: false, criadoEm: window.fbTimestamp()
+        }, {merge:true});
+        await submitImovel(user.uid, 'emp', document.getElementById('card-cadastro-imovel-empresa'));
+        showConfirm('Cadastro da empresa submetido', 'A nossa equipa vai validar a documentação da empresa e do primeiro imóvel. Isto pode demorar até 48 horas.');
+      } catch(err){
+        console.error(err);
+        msgEl.style.color = 'var(--danger)';
+        msgEl.textContent = err.message || 'Não foi possível concluir o cadastro. Tente novamente.';
+      } finally {
+        setBtnLoading(btn, false, label);
+      }
+
+    } else if(type === 'cliente'){
+      const msgEl = document.getElementById('cli-conta-msg');
+      if(!requireFirebase(msgEl)) return;
+      const nome = document.getElementById('cli-nome').value.trim();
+      const email = document.getElementById('cli-email').value.trim();
+      const senha = document.getElementById('cli-senha').value;
+      const telefone = document.getElementById('cli-telefone').value.trim();
+      if(!nome || !email || !senha || senha.length < 6){
+        msgEl.style.color = 'var(--danger)';
+        msgEl.textContent = 'Preencha nome, email e uma palavra-passe com pelo menos 6 caracteres.';
+        return;
+      }
+      setBtnLoading(btn, true, label);
+      try{
+        const user = await ensureAccount(email, senha);
+        await user.updateProfile({displayName: nome});
+        const intencaoInput = document.querySelector('input[name="intencao"]:checked');
+        await window.db.collection('users').doc(user.uid).set({
+          tipo: 'cliente', nome, email, telefone,
+          intencao: intencaoInput ? intencaoInput.value : 'ambos',
+          provinciaInteresse: document.getElementById('cli-provincia').value,
+          municipioInteresse: document.getElementById('cli-municipio').value,
+          orcamentoMin: Number(document.getElementById('cli-orc-min').value) || null,
+          orcamentoMax: Number(document.getElementById('cli-orc-max').value) || null,
+          tipologia: document.getElementById('cli-tipologia').value,
+          tipoImovel: document.getElementById('cli-tipo-imovel').value,
+          criadoEm: window.fbTimestamp()
+        }, {merge:true});
+        showConfirm('Conta criada com sucesso', 'Já pode pesquisar imóveis, guardar favoritos e agendar visitas com um consultor.');
+      } catch(err){
+        console.error(err);
+        msgEl.style.color = 'var(--danger)';
+        msgEl.textContent = err.message || 'Não foi possível concluir o registo. Tente novamente.';
+      } finally {
+        setBtnLoading(btn, false, label);
+      }
+    }
+  });
+});
+</script>
+
+<script>
+window.CASABOT_CONTEXT = {
+  groqApiKey: "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",
+  headerSub: "A ajudar no seu cadastro",
+  greeting: "Olá! Sou o CasaBot 👋 Estou aqui para ajudar a preencher o seu cadastro corretamente. Está a cadastrar-se como proprietário, empresa/hotel, ou está à procura de casa?",
+  quickReplies: [
+    "Que documentos preciso para ser proprietário?",
+    "Como cadastro um imóvel corretamente?",
+    "Quanto tempo demora a verificação?",
+    "Qual a diferença entre proprietário e empresa?"
+  ],
+  systemPrompt: "És o CasaBot, o assistente virtual da CasaFácil, uma plataforma imobiliária angolana (site institucional + marketplace de imóveis para venda e arrendamento em Angola). " +
+    "Estás especificamente a ajudar utilizadores na PÁGINA DE CADASTRO da plataforma. Os três tipos de conta são: " +
+    "(1) Proprietário — pessoa singular que cadastra BI, telefone, email, endereço, depois carrega BI e uma selfie para verificação, e finalmente cadastra o imóvel (título, finalidade venda/arrendamento, tipo, província/município/bairro, preço — mínimo 15.000 Kz, tipologia T1-T4+, área, descrição, características como mobilado/garagem/quintal/piscina/animais/gerador, fotos mínimo 3, vídeo opcional, e documento de propriedade). " +
+    "(2) Empresa/Hotel — para hotelaria, imobiliárias, promotoras ou gestão de condomínios; precisa de NIF, alvará/licença comercial, certidão comercial e BI do responsável legal, além do mesmo formulário de cadastro de imóvel. " +
+    "(3) Cliente — arrendatário ou comprador; cria conta simples e indica o que procura (arrendar/comprar, zona, orçamento, tipologia). " +
+    "O teu papel é: explicar dúvidas sobre o processo de cadastro, ajudar o proprietário a escrever uma descrição melhor e mais completa do imóvel, sugerir que características mencionar, esclarecer porque a verificação de documentos é importante (segurança antifraude), e orientar para uma inscrição mais completa e 'certeira' (com boas fotos, preço realista, localização exata). " +
+    "Sê breve (2-5 frases normalmente), caloroso, prático e sempre em português de Angola. Se não souberes algo específico da plataforma com certeza, sugere que confirmem com a equipa de suporte via WhatsApp."
+};
+</script>
+<script src="casabot.js"></script>
+</body>
+</html>
